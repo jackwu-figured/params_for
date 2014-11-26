@@ -16,7 +16,7 @@ module ParamsFor
           method_name = "#{name}_params"
 
           define_method(method_name) do
-            return validate_params(name, options)
+            return validated_params(name, options)
           end
         end
       end
@@ -29,7 +29,7 @@ module ParamsFor
       # @param options [Hash] optional
       # @option options [Boolean] :class class of the validator
       # @return [Hash]
-      def validate_params(name, options = {})
+      def validated_params(name, options = {})
         if options[:class]
           validator_klass = options[:class]
         else
@@ -39,13 +39,14 @@ module ParamsFor
 
         validator = validator_klass.new(params)
 
-        unless validator.valid?
-          render status: :bad_request, json: validator.errors.to_json and return false
-        end
+        raise InvalidParamsException.new unless validator.valid?
 
-        Rails.logger.debug("#{validator.inspect}".yellow)
         validator.to_params
       end
+
+      class InvalidParamsException < StandardError; end
+
     end
   end
 end
+

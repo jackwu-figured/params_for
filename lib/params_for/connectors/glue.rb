@@ -17,8 +17,8 @@ module ParamsFor
           define_method(method_name) do
             return params_for(name, options)
           end
-          return if options[:before_action] == false
-          send(:before_action, method_name.to_sym, options)
+          return if options[:before_filter] == false
+          send(:before_filter, method_name.to_sym, options)
         end
       end
 

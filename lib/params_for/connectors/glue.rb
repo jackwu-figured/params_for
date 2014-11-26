@@ -43,6 +43,7 @@ module ParamsFor
           render status: :bad_request, json: validator.errors.to_json and return false
         end
 
+        Rails.logger.debug("#{validator.inspect}".yellow)
         validator.to_params
       end
     end
